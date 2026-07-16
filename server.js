@@ -1,23 +1,120 @@
-// 1. เรียกใชงาน Module ที่ชื่อวา 'http' ซึ่งเปนระบบพื้นฐานของ Node.js สําหรับทําเซิรฟ เวอร
- const http = require('http');
+// 1. เรียกใช้งาน Module http
+const http = require('http');
 
- // 2. กําหนดชองทาง (Port) ที่เซิรฟเวอรจะใชสื่อสาร โดยใหใชของที่ Cloud กําหนดมา(process.env.PORT) ถาไมมีใหใช 3000
- const port = process.env.PORT || 3000;
+// 2. กำหนด Port
+const port = process.env.PORT || 3000;
 
- // 3. สรางเครื่องแมขาย (Server) ที่คอยรับคําขอ (req) และตอบกลับ (res)
- const server = http.createServer((req, res) => {
+// 3. สร้าง Server
+const server = http.createServer((req, res) => {
 
- // 3.1 ตั้งรหัสสถานะ 200 หมายถึง "ทํางานสําเร็จ (OK)"
- res.statusCode = 200;
+    // 3.1 Status Code
+    res.statusCode = 200;
 
- // 3.2 บอกเบราวเซอรของผูใชวา สิ่งที่สงกลับไปคือไฟลขอความแบบ HTML และรองรับภาษาไทย (utf-8)
- res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    // 3.2 กำหนดชนิดข้อมูล
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
 
-// 3.3 สงขอมูลหนาเว็บกลับไปหาผูใช (*** ใหนักศึกษาแกชื่อ-นามสกุลตรงนี้ ***)
-res.end('<h1>สวัสดีค่ะ! นี่คือ Web Server ของ นางสาววรัญญา แย้มยิ้ม รหัสนักศึกษา 69319010139 </h1><p>เครื่องแม่ข่ายทํางานปกติบนระบบ Railway แล้วค่ะ!</p>');
- });
+    // 3.3 ส่งหน้าเว็บ
+    res.end(`
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Web Server</title>
 
- // 4. สั่งใหเซิรฟเวอรเริ่มตนเปดรับฟงการเชื่อมตอตาม Port ที่กําหนดไว
- server.listen(port, () => {
- console.log(`Server is running! เครื่องแม่ข่ายเปิดทํางานแล้วที่ช่องทาง: ${port}`);
- });
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body{
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:linear-gradient(135deg,#4facfe,#00f2fe);
+    }
+
+    .card{
+        background:#fff;
+        width:420px;
+        padding:35px;
+        border-radius:20px;
+        box-shadow:0 15px 35px rgba(0,0,0,.2);
+        text-align:center;
+    }
+
+    .icon{
+        font-size:60px;
+        margin-bottom:15px;
+    }
+
+    h1{
+        color:#0077cc;
+        margin-bottom:15px;
+        font-size:28px;
+    }
+
+    h2{
+        color:#333;
+        font-size:22px;
+        margin-bottom:10px;
+    }
+
+    p{
+        color:#666;
+        font-size:16px;
+        line-height:1.7;
+        margin-bottom:12px;
+    }
+
+    .status{
+        display:inline-block;
+        background:#28a745;
+        color:white;
+        padding:8px 18px;
+        border-radius:30px;
+        font-weight:bold;
+        margin-top:10px;
+    }
+
+    footer{
+        margin-top:25px;
+        color:#888;
+        font-size:13px;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="card">
+    <div class="icon">💻</div>
+
+    <h1>Node.js Web Server</h1>
+
+    <h2>นางสาววรัญญา แย้มยิ้ม</h2>
+
+    <p><strong>รหัสนักศึกษา:</strong> 69319010139</p>
+
+    <p>ยินดีต้อนรับเข้าสู่ Web Server ที่พัฒนาด้วย Node.js และกำลังทำงานบน Railway</p>
+
+    <div class="status">🟢 Server Online</div>
+
+    <footer>
+        Railway Deployment 🚀
+    </footer>
+</div>
+
+</body>
+</html>
+    `);
+});
+
+// 4. เริ่มต้น Server
+server.listen(port, () => {
+    console.log(`Server is running! เครื่องแม่ข่ายเปิดทำงานแล้วที่ช่องทาง: ${port}`);
+});
