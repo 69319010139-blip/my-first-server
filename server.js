@@ -1,120 +1,32 @@
-// 1. เรียกใช้งาน Module http
-const http = require('http');
-
-// 2. กำหนด Port
-const port = process.env.PORT || 3000;
-
-// 3. สร้าง Server
-const server = http.createServer((req, res) => {
-
-    // 3.1 Status Code
-    res.statusCode = 200;
-
-    // 3.2 กำหนดชนิดข้อมูล
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-
-    // 3.3 ส่งหน้าเว็บ
-    res.end(`
-<!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Web Server</title>
-
-<style>
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body{
-        height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        background:linear-gradient(135deg,#4facfe,#00f2fe);
-    }
-
-    .card{
-        background:#fff;
-        width:420px;
-        padding:35px;
-        border-radius:20px;
-        box-shadow:0 15px 35px rgba(0,0,0,.2);
-        text-align:center;
-    }
-
-    .icon{
-        font-size:60px;
-        margin-bottom:15px;
-    }
-
-    h1{
-        color:#0077cc;
-        margin-bottom:15px;
-        font-size:28px;
-    }
-
-    h2{
-        color:#333;
-        font-size:22px;
-        margin-bottom:10px;
-    }
-
-    p{
-        color:#666;
-        font-size:16px;
-        line-height:1.7;
-        margin-bottom:12px;
-    }
-
-    .status{
-        display:inline-block;
-        background:#28a745;
-        color:white;
-        padding:8px 18px;
-        border-radius:30px;
-        font-weight:bold;
-        margin-top:10px;
-    }
-
-    footer{
-        margin-top:25px;
-        color:#888;
-        font-size:13px;
-    }
-</style>
-
-</head>
-<body>
-
-<div class="card">
-    <div class="icon">💻</div>
-
-    <h1>Node.js Web Server</h1>
-
-    <h2>นางสาววรัญญา แย้มยิ้ม</h2>
-
-    <p><strong>รหัสนักศึกษา:</strong> 69319010139</p>
-
-    <p>ยินดีต้อนรับเข้าสู่ Web Server ที่พัฒนาด้วย Node.js และกำลังทำงานบน Railway</p>
-
-    <div class="status">🟢 Server Online</div>
-
-    <footer>
-        Railway Deployment 🚀
-    </footer>
-</div>
-
-</body>
-</html>
-    `);
+const pool = new Pool({
+connectionString: process.env.DATABASE_URL,
 });
+const port = process.env.PORT || 3000;
+const server = http.createServer(async (req, res) => {
+res.statusCode = 200;
+res.setHeader('Content-Type', 'text/html; charset=utf-8');
 
-// 4. เริ่มต้น Server
+try {
+// 3. ขอเชื่อมตอและสงคําสั่ง SQL ไปดึงขอมูลจากตาราง students
+const client = await pool.connect();
+const result = await client.query('SELECT * FROM students');
+client.release(); // คนืการเชื่อมตอเมื่อใชงานเสร็จ
+// 4. นําขอมูลที่ได(result.rows) มาประกอบเปนตาราง HTML
+let html = `<h1>ฐานขอมูลนักศึกษา (ทดสอบการเชื่อมตอ)</h1>`;
+html += `<table border="1" cellpadding="10">`;
+html += `<tr><th>69319010139</th><th>okนางสาววรัญญา แย้มยิ้ม</th></tr>`;
+// วนลูปนําขอมูลแตละแถวมาแสดง
+result.rows.forEach(row => {
+html += `<tr><td>${row.student_id}</td><td>${row.student_name}</td></tr>`;
+});
+html += `</table>`;
+res.end(html);
+} catch (err) {
+// กรณเีชื่อมตอไมไดหรือเขียนชื่อตารางผิด
+console.error(err);
+res.end(`<h1>เกิดขอผิดพลาด!</h1><p>${err.message}</p>`);
+}
+});
 server.listen(port, () => {
-    console.log(`Server is running! เครื่องแม่ข่ายเปิดทำงานแล้วที่ช่องทาง: ${port}`);
+console.log(`Server is running on port: ${port}`);
 });
