@@ -7,11 +7,11 @@ res.statusCode = 200;
 res.setHeader('Content-Type', 'text/html; charset=utf-8');
 
 try {
-// 3. ขอเชื่อมตอและสงคําสั่ง SQL ไปดึงขอมูลจากตาราง students
+// 3. ขอเชื่อมต่อและสองคําสั่ง SQL ไปดึงข้อมูลจากตาราง students
 const client = await pool.connect();
 const result = await client.query('SELECT * FROM students');
-client.release(); // คนืการเชื่อมตอเมื่อใชงานเสร็จ
-// 4. นําขอมูลที่ได(result.rows) มาประกอบเปนตาราง HTML
+client.release(); // คนืการเชื่อมต่อเมื่อใช้งานเสร็จ
+// 4. นําข้อมูลที่ได(result.rows) มาประกอบเป็นตาราง HTML
 let html = `<h1>ฐานข้อมูลนักศึกษา (ทดสอบการเชื่อมต่อ)</h1>`;
 html += `<table border="1" cellpadding="10">`;
 html += `<tr><th>69319010139</th><th>okนางสาววรัญญษ แย้มยิ้ม</th></tr>`;
@@ -24,7 +24,7 @@ res.end(html);
 } catch (err) {
 // กรณเีชื่อมต่อไม่ได้หรือเขียนชื่อตารางผิด
 console.error(err);
-res.end(`<h1>เกิดขอผิดพลาด!</h1><p>${err.message}</p>`);
+res.end(`<h1>เกิดข้อผิดพลาด!</h1><p>${err.message}</p>`);
 }
 });
 server.listen(port, () => {
