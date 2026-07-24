@@ -1,3 +1,7 @@
+const http = require('http');
+// 1. เรียกใช้งาน Pool จากไลบรารี pg สําหรับจัดการการเชื่อมต่อฐานข้อมูล
+const { Pool } = require('pg');
+// 2. ตั้งค่าการเชื่อมต่อ โดยดึง URL มาจาก Environment Variable ของ Railway
 const pool = new Pool({
 connectionString: process.env.DATABASE_URL,
 });
@@ -11,10 +15,10 @@ try {
 const client = await pool.connect();
 const result = await client.query('SELECT * FROM students');
 client.release(); // คนืการเชื่อมต่อเมื่อใช้งานเสร็จ
-// 4. นําข้อมูลที่ได(result.rows) มาประกอบเป็นตาราง HTML
+// 4. นําข้อมูลที่ได้(result.rows) มาประกอบเป็นตาราง HTML
 let html = `<h1>ฐานข้อมูลนักศึกษา (ทดสอบการเชื่อมต่อ)</h1>`;
 html += `<table border="1" cellpadding="10">`;
-html += `<tr><th>69319010139</th><th>okนางสาววรัญญา แย้มยิ้ม</th></tr>`;
+html += `<tr><th>รหัสนักศึกษา</th><th>ชื่อ-นามสกุล</th></tr>`;
 // วนลูปนําข้อมูลแต่ละแถวมาแสดง
 result.rows.forEach(row => {
 html += `<tr><td>${row.student_id}</td><td>${row.student_name}</td></tr>`;
